@@ -1,12 +1,11 @@
-package com.example.application.views.booksearch;
+package com.example.application.views.bookcreate;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-import com.example.application.data.entity.Books;
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
 import com.example.application.views.MainLayout;
-import com.example.application.views.booksearch.BookSearchView.SampleItem;
-
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -14,125 +13,142 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.example.application.data.service.SamplePersonService;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-
-
-@PageTitle("Book Search")
-@Route(value = "Book-Search", layout = MainLayout.class)
+@PageTitle("Book Create")
+@Route(value = "Book-Create", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
 @Uses(Icon.class)
-public class BookSearchView extends Composite<VerticalLayout> {
+public class BookCreateView extends Composite<VerticalLayout> {
 
-    public BookSearchView() {
+    public BookCreateView() {
+
         HorizontalLayout layoutRow = new HorizontalLayout();
-        TextField textField = new TextField();
-        TextField textField2 = new TextField();
-        MultiSelectComboBox multiSelectComboBox = new MultiSelectComboBox();
-        MultiSelectComboBox multiSelectComboBox2 = new MultiSelectComboBox();
-        DatePicker datePicker = new DatePicker();
-        DatePicker datePicker2 = new DatePicker();
+        VerticalLayout layoutColumn5 = new VerticalLayout();
+        VerticalLayout layoutColumn2 = new VerticalLayout();
+        H3 h3 = new H3();
         HorizontalLayout layoutRow2 = new HorizontalLayout();
+        VerticalLayout layoutColumn3 = new VerticalLayout();
+        TextField textField = new TextField();
+        MultiSelectComboBox multiSelectComboBox = new MultiSelectComboBox();
+        DatePicker datePicker = new DatePicker();
+        VerticalLayout layoutColumn4 = new VerticalLayout();
+        TextField textField2 = new TextField();
+        MultiSelectComboBox multiSelectComboBox2 = new MultiSelectComboBox();
+        HorizontalLayout layoutRow3 = new HorizontalLayout();
+        DatePicker datePicker2 = new DatePicker();
         Checkbox checkbox = new Checkbox();
+        HorizontalLayout layoutRow4 = new HorizontalLayout();
         Button buttonPrimary = new Button();
-        Grid minimalistGrid = new Grid(SamplePerson.class);
-        getContent().setHeightFull();
+        Button buttonSecondary = new Button();
+        VerticalLayout layoutColumn6 = new VerticalLayout();
+
         getContent().setWidthFull();
-        getContent().addClassName(Gap.XSMALL);
-        getContent().addClassName(Padding.XSMALL);
+        getContent().addClassName(Padding.LARGE);
         layoutRow.setWidthFull();
-        layoutRow.addClassName(Gap.MEDIUM);
-        
+        layoutRow.setFlexGrow(1.0, layoutColumn5);
+        layoutColumn5.setWidth(null);
+        layoutRow.setFlexGrow(1.0, layoutColumn2);
+        layoutColumn2.setWidth(null);
 
-        textField.setLabel("Name");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField);
-
-        textField2.setLabel("Autor");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField2);
-
-        multiSelectComboBox.setLabel("Genre");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox);
-        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
-
-        multiSelectComboBox2.setLabel("Theme");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox2);
-        setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
-
-        datePicker.setLabel("Started after");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker);
-
-        datePicker2.setLabel("Finished before");
-        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker2);
+        h3.setText("Book add");
 
         layoutRow2.setWidthFull();
-        layoutRow2.addClassName(Gap.MEDIUM);
+        layoutRow2.addClassName(Gap.LARGE);
+        layoutRow2.setFlexGrow(1.0, layoutColumn3);
+        layoutColumn3.setWidth(null);
+
+        textField.setLabel("Name");
+        textField.setWidthFull();
+
+        multiSelectComboBox.setLabel("Genre");
+        multiSelectComboBox.setWidthFull();
+        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
+
+        datePicker.setLabel("Start date");
+        datePicker.setWidthFull();
+        
+        layoutRow2.setFlexGrow(1.0, layoutColumn4);
+        layoutColumn4.setWidth(null);
+
+        textField2.setLabel("Autor");
+        textField2.setWidthFull();
+
+        multiSelectComboBox2.setLabel("Theme");
+        multiSelectComboBox2.setWidthFull();
+        setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
+
+        layoutRow3.addClassName(Gap.MEDIUM);
+        layoutRow3.setWidthFull();
+
+        datePicker2.setLabel("Finish date");
+        layoutRow3.setFlexGrow(1.0, datePicker2);
 
         checkbox.setLabel("Favorite");
-        layoutRow2.setAlignSelf(FlexComponent.Alignment.CENTER, checkbox);
+        layoutRow4.addClassName(Gap.MEDIUM);
 
-        buttonPrimary.setText("Search");
-        layoutRow2.setAlignSelf(FlexComponent.Alignment.CENTER, buttonPrimary);
+        buttonPrimary.setText("Save");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonPrimary.addClickListener(e -> {
+            String name = textField.getValue();
+            String autor = textField2.getValue();
+            String genre = (String) multiSelectComboBox.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            String theme = (String) multiSelectComboBox2.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            String startDate = datePicker.getValue().toString();
+            String finishDate = datePicker2.getValue().toString();
+            boolean favorite = checkbox.getValue();
+
+            addBookToDatabase(name, autor, genre, theme, startDate, finishDate, favorite);
+
+            // Add any additional logic here, such as navigating to another view or showing a confirmation message.
+        });
 
 
-        minimalistGrid.addThemeVariants(
-            GridVariant.LUMO_COMPACT, 
-            GridVariant.LUMO_NO_BORDER,
-            GridVariant.LUMO_NO_ROW_BORDERS);
-
-        //Adiciona os dados ao grid
-        setGridSampleData(minimalistGrid);
-        //
-
-        Grid<Books> gridCostumized = new Grid<>(Books.class, false);
-        gridCostumized.addColumn(Books::getBookName).setHeader("Name");
-        gridCostumized.addColumn(Books::getAutorName).setHeader("Autor");
-        gridCostumized.addColumn(Books::getGenre).setHeader("Genre");
-        gridCostumized.addColumn(Books::getTheme).setHeader("Theme");
-
-        List<Books> books = getBooksFromDatabase();
-        gridCostumized.setItems(books);
-  
+        buttonSecondary.setText("Cancel");
+        
+        layoutRow.setFlexGrow(1.0, layoutColumn6);
+        layoutColumn6.setWidth(null);
         getContent().add(layoutRow);
-        layoutRow.add(textField);
-        layoutRow.add(textField2);
-        layoutRow.add(multiSelectComboBox);
-        layoutRow.add(multiSelectComboBox2);
-        layoutRow.add(datePicker);
-        layoutRow.add(datePicker2);
-        getContent().add(layoutRow2);
-        layoutRow2.add(checkbox);
-        layoutRow2.add(buttonPrimary);
-
-        //onde coloca a grid que via ser usada
-        getContent().add(gridCostumized);
+        layoutRow.add(layoutColumn5);
+        layoutRow.add(layoutColumn2);
+        layoutColumn2.add(h3);
+        layoutColumn2.add(layoutRow2);
+        layoutRow2.add(layoutColumn3);
+        layoutColumn3.add(textField);
+        layoutColumn3.add(multiSelectComboBox);
+        layoutColumn3.add(datePicker);
+        layoutRow2.add(layoutColumn4);
+        layoutColumn4.add(textField2);
+        layoutColumn4.add(multiSelectComboBox2);
+        layoutColumn4.add(layoutRow3);
+        layoutRow3.add(datePicker2);
+        layoutColumn2.add(checkbox);
+        layoutColumn2.add(layoutRow4);
+        layoutRow4.add(buttonPrimary);
+        layoutRow4.add(buttonSecondary);
+        layoutRow.add(layoutColumn6);
     }
 
-
-// -- Começo para funcionar a Combobox
     record SampleItem(String value, String label, Boolean disabled) {
+        
     }
 
     private void setMultiSelectComboBoxSampleDataGenre(MultiSelectComboBox multiSelectComboBoxGenre) {
@@ -164,8 +180,32 @@ public class BookSearchView extends Composite<VerticalLayout> {
         multiSelectComboBoxTheme.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
 
-// -- Fim para funcionar a Combobox
 
+
+    private void addBookToDatabase(String name, String autor, String genre, String theme, String startDate,  String finishDate, boolean favorite) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Paolo Klahold\\Desktop\\Faculdade\\2023 02\\POO\\Atividade Avalitiva hard\\vaadin-work-main\\mybooklist\\target\\classes\\biblioteca.db");
+            
+            String insertQuery = "INSERT INTO books (name, autor, genre, theme, startDate, finishDate, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            
+            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, autor);
+            preparedStatement.setString(3, genre);
+            preparedStatement.setString(4, theme);
+            preparedStatement.setString(5, startDate);
+            preparedStatement.setString(6, finishDate);
+            preparedStatement.setBoolean(7, favorite);
+            
+            preparedStatement.executeUpdate();
+            
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+ 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
@@ -174,41 +214,4 @@ public class BookSearchView extends Composite<VerticalLayout> {
 
     @Autowired()
     private SamplePersonService samplePersonService;
-
-
-    private List<Books> getBooksFromDatabase() {
-        List<Books> books = new ArrayList<>();
-        try {
-            
-            // Estabelecer uma conexão com o banco de dados MySQL
-            Connection connection = DriverManager.getConnection("jdbc:mysql://seu_host/seu_banco_de_dados", "seu_usuario", "sua_senha");
-
-            // Preparar a consulta SQL
-            String query = "SELECT * FROM sua_tabela";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            // Executar a consulta
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            // Processar os resultados
-            while (resultSet.next()) {
-                Books book = new Books();
-                book.setBookName(resultSet.getString("book_name"));
-                book.setAutorName(resultSet.getString("autor_name"));
-                book.setGenre(resultSet.getString("genre"));
-                book.setTheme(resultSet.getString("theme"));
-                books.add(book);
-            }
-
-            // Fechar recursos
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return books;
-    }
-
-
 }
