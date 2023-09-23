@@ -20,6 +20,11 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.application.data.service.SamplePersonService;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
 @PageTitle("Book Create")
 @Route(value = "Book-Create", layout = MainLayout.class)
@@ -63,7 +68,7 @@ public class BookCreateView extends Composite<VerticalLayout> {
         textField.setWidthFull();
         multiSelectComboBox.setLabel("Genre");
         multiSelectComboBox.setWidthFull();
-        setMultiSelectComboBoxSampleData(multiSelectComboBox);
+        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
         datePicker.setLabel("Start date");
         datePicker.setWidthFull();
         layoutRow2.setFlexGrow(1.0, layoutColumn4);
@@ -72,7 +77,7 @@ public class BookCreateView extends Composite<VerticalLayout> {
         textField2.setWidthFull();
         multiSelectComboBox2.setLabel("Theme");
         multiSelectComboBox2.setWidthFull();
-        setMultiSelectComboBoxSampleData(multiSelectComboBox2);
+        setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
         layoutRow3.addClassName(Gap.MEDIUM);
         layoutRow3.setWidthFull();
         datePicker2.setLabel("Finish date");
@@ -106,15 +111,44 @@ public class BookCreateView extends Composite<VerticalLayout> {
     }
 
     record SampleItem(String value, String label, Boolean disabled) {
+        
     }
 
-    private void setMultiSelectComboBoxSampleData(MultiSelectComboBox multiSelectComboBox) {
-        List<SampleItem> sampleItems = new ArrayList<>();
-        sampleItems.add(new SampleItem("first", "First", null));
-        sampleItems.add(new SampleItem("second", "Second", null));
-        sampleItems.add(new SampleItem("third", "Third", Boolean.TRUE));
-        sampleItems.add(new SampleItem("fourth", "Fourth", null));
-        multiSelectComboBox.setItems(sampleItems);
-        multiSelectComboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
+    private void setMultiSelectComboBoxSampleDataGenre(MultiSelectComboBox multiSelectComboBoxGenre) {
+        List<SampleItem> sampleItemsGenre = new ArrayList<>();
+        sampleItemsGenre.add(new SampleItem("action", "Action", null));
+        sampleItemsGenre.add(new SampleItem("adventure", "Adventure", null));
+        sampleItemsGenre.add(new SampleItem("comedy", "Comedy", null));
+        sampleItemsGenre.add(new SampleItem("drama", "Drama", null));
+        sampleItemsGenre.add(new SampleItem("fantasy", "Fantasy", null));
+        sampleItemsGenre.add(new SampleItem("mystery", "Mystery", null));
+        sampleItemsGenre.add(new SampleItem("Romance", "Romance", null));
+        sampleItemsGenre.add(new SampleItem("scifi", "Sci-Fi", null));
+        sampleItemsGenre.add(new SampleItem("sports", "Sports", null));
+        sampleItemsGenre.add(new SampleItem("suspense", "Suspense", null));
+        multiSelectComboBoxGenre.setItems(sampleItemsGenre);
+        multiSelectComboBoxGenre.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
+
+    private void setMultiSelectComboBoxSampleDataTheme(MultiSelectComboBox multiSelectComboBoxTheme) {
+        List<SampleItem> sampleItemsTheme = new ArrayList<>();
+        sampleItemsTheme.add(new SampleItem("educational", "Educational", null));
+        sampleItemsTheme.add(new SampleItem("historical", "Historical", null));
+        sampleItemsTheme.add(new SampleItem("martialarts", "Martial Arts", null));
+        sampleItemsTheme.add(new SampleItem("military", "Military", null));
+        sampleItemsTheme.add(new SampleItem("music", "Music", null));
+        sampleItemsTheme.add(new SampleItem("psychological", "Psychological", null));
+        sampleItemsTheme.add(new SampleItem("space", "Space", null));
+        multiSelectComboBoxTheme.setItems(sampleItemsTheme);
+        multiSelectComboBoxTheme.setItemLabelGenerator(item -> ((SampleItem) item).label());
+    }
+
+    private void setGridSampleData(Grid grid) {
+        grid.setItems(query -> samplePersonService.list(
+                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+                .stream());
+    }
+
+    @Autowired()
+    private SamplePersonService samplePersonService;
 }
