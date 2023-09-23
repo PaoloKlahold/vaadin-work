@@ -1,5 +1,10 @@
 package com.example.application.views.bookcreate;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -20,6 +25,8 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.example.application.data.service.SamplePersonService;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
@@ -33,6 +40,7 @@ import org.springframework.data.domain.PageRequest;
 public class BookCreateView extends Composite<VerticalLayout> {
 
     public BookCreateView() {
+
         HorizontalLayout layoutRow = new HorizontalLayout();
         VerticalLayout layoutColumn5 = new VerticalLayout();
         VerticalLayout layoutColumn2 = new VerticalLayout();
@@ -52,6 +60,7 @@ public class BookCreateView extends Composite<VerticalLayout> {
         Button buttonPrimary = new Button();
         Button buttonSecondary = new Button();
         VerticalLayout layoutColumn6 = new VerticalLayout();
+
         getContent().setWidthFull();
         getContent().addClassName(Padding.LARGE);
         layoutRow.setWidthFull();
@@ -59,34 +68,62 @@ public class BookCreateView extends Composite<VerticalLayout> {
         layoutColumn5.setWidth(null);
         layoutRow.setFlexGrow(1.0, layoutColumn2);
         layoutColumn2.setWidth(null);
+
         h3.setText("Book add");
+
         layoutRow2.setWidthFull();
         layoutRow2.addClassName(Gap.LARGE);
         layoutRow2.setFlexGrow(1.0, layoutColumn3);
         layoutColumn3.setWidth(null);
+
         textField.setLabel("Name");
         textField.setWidthFull();
+
         multiSelectComboBox.setLabel("Genre");
         multiSelectComboBox.setWidthFull();
         setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
+
         datePicker.setLabel("Start date");
         datePicker.setWidthFull();
+        
         layoutRow2.setFlexGrow(1.0, layoutColumn4);
         layoutColumn4.setWidth(null);
+
         textField2.setLabel("Autor");
         textField2.setWidthFull();
+
         multiSelectComboBox2.setLabel("Theme");
         multiSelectComboBox2.setWidthFull();
         setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
+
         layoutRow3.addClassName(Gap.MEDIUM);
         layoutRow3.setWidthFull();
+
         datePicker2.setLabel("Finish date");
         layoutRow3.setFlexGrow(1.0, datePicker2);
+
         checkbox.setLabel("Favorite");
         layoutRow4.addClassName(Gap.MEDIUM);
+
         buttonPrimary.setText("Save");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonPrimary.addClickListener(e -> {
+            String name = textField.getValue();
+            String autor = textField2.getValue();
+            String genre = (String) multiSelectComboBox.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            String theme = (String) multiSelectComboBox2.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            String startDate = datePicker.getValue().toString();
+            String finishDate = datePicker2.getValue().toString();
+            boolean favorite = checkbox.getValue();
+
+            addBookToDatabase(name, autor, genre, theme, startDate, finishDate, favorite);
+
+            // Add any additional logic here, such as navigating to another view or showing a confirmation message.
+        });
+
+
         buttonSecondary.setText("Cancel");
+        
         layoutRow.setFlexGrow(1.0, layoutColumn6);
         layoutColumn6.setWidth(null);
         getContent().add(layoutRow);
@@ -143,6 +180,32 @@ public class BookCreateView extends Composite<VerticalLayout> {
         multiSelectComboBoxTheme.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
 
+
+
+    private void addBookToDatabase(String name, String autor, String genre, String theme, String startDate,  String finishDate, boolean favorite) {
+        try {
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Paolo Klahold\\Desktop\\Faculdade\\2023 02\\POO\\Atividade Avalitiva hard\\vaadin-work-main\\mybooklist\\target\\classes\\biblioteca.db");
+            
+            String insertQuery = "INSERT INTO books (name, autor, genre, theme, startDate, finishDate, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            
+            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, autor);
+            preparedStatement.setString(3, genre);
+            preparedStatement.setString(4, theme);
+            preparedStatement.setString(5, startDate);
+            preparedStatement.setString(6, finishDate);
+            preparedStatement.setBoolean(7, favorite);
+            
+            preparedStatement.executeUpdate();
+            
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+ 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
