@@ -1,8 +1,10 @@
 package com.example.application.views.booksearch;
 
+import com.example.application.data.entity.Books;
 import com.example.application.data.entity.SamplePerson;
 import com.example.application.data.service.SamplePersonService;
 import com.example.application.views.MainLayout;
+import com.example.application.views.booksearch.BookSearchView.SampleItem;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -27,6 +29,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
+
 @PageTitle("Book Search")
 @Route(value = "Book-Search", layout = MainLayout.class)
 @Uses(Icon.class)
@@ -50,22 +53,30 @@ public class BookSearchView extends Composite<VerticalLayout> {
         getContent().addClassName(Padding.XSMALL);
         layoutRow.setWidthFull();
         layoutRow.addClassName(Gap.MEDIUM);
+
         textField.setLabel("Name");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField);
+
         textField2.setLabel("Autor");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField2);
+
         multiSelectComboBox.setLabel("Genre");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox);
-        setMultiSelectComboBoxSampleData(multiSelectComboBox);
+        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
+
         multiSelectComboBox2.setLabel("Theme");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox2);
-        setMultiSelectComboBoxSampleData(multiSelectComboBox2);
+        setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
+
         datePicker.setLabel("Started after");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker);
+
         datePicker2.setLabel("Finished before");
         layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker2);
+
         layoutRow2.setWidthFull();
         layoutRow2.addClassName(Gap.MEDIUM);
+
         checkbox.setLabel("Favorite");
         layoutRow2.setAlignSelf(FlexComponent.Alignment.CENTER, checkbox);
         buttonPrimary.setText("Search");
@@ -87,18 +98,40 @@ public class BookSearchView extends Composite<VerticalLayout> {
         getContent().add(minimalistGrid);
     }
 
+    private void setMultiSelectComboBoxSampleDataGenre(MultiSelectComboBox multiSelectComboBoxGenre) {
+        List<SampleItem> sampleItemsGenre = new ArrayList<>();
+        sampleItemsGenre.add(new SampleItem("action", "Action", null));
+        sampleItemsGenre.add(new SampleItem("adventure", "Adventure", null));
+        sampleItemsGenre.add(new SampleItem("comedy", "Comedy", null));
+        sampleItemsGenre.add(new SampleItem("drama", "Drama", null));
+        sampleItemsGenre.add(new SampleItem("fantasy", "Fantasy", null));
+        sampleItemsGenre.add(new SampleItem("mystery", "Mystery", null));
+        sampleItemsGenre.add(new SampleItem("Romance", "Romance", null));
+        sampleItemsGenre.add(new SampleItem("scifi", "Sci-Fi", null));
+        sampleItemsGenre.add(new SampleItem("sports", "Sports", null));
+        sampleItemsGenre.add(new SampleItem("suspense", "Suspense", null));
+        multiSelectComboBoxGenre.setItems(sampleItemsGenre);
+        multiSelectComboBoxGenre.setItemLabelGenerator(item -> ((SampleItem) item).label());
+    }
+
     record SampleItem(String value, String label, Boolean disabled) {
     }
 
-    private void setMultiSelectComboBoxSampleData(MultiSelectComboBox multiSelectComboBox) {
-        List<SampleItem> sampleItems = new ArrayList<>();
-        sampleItems.add(new SampleItem("first", "First", null));
-        sampleItems.add(new SampleItem("second", "Second", null));
-        sampleItems.add(new SampleItem("third", "Third", Boolean.TRUE));
-        sampleItems.add(new SampleItem("fourth", "Fourth", null));
-        multiSelectComboBox.setItems(sampleItems);
-        multiSelectComboBox.setItemLabelGenerator(item -> ((SampleItem) item).label());
+
+
+    private void setMultiSelectComboBoxSampleDataTheme(MultiSelectComboBox multiSelectComboBoxTheme) {
+        List<SampleItem> sampleItemsTheme = new ArrayList<>();
+        sampleItemsTheme.add(new SampleItem("educational", "Educational", null));
+        sampleItemsTheme.add(new SampleItem("historical", "Historical", null));
+        sampleItemsTheme.add(new SampleItem("martialarts", "Martial Arts", null));
+        sampleItemsTheme.add(new SampleItem("military", "Military", null));
+        sampleItemsTheme.add(new SampleItem("music", "Music", null));
+        sampleItemsTheme.add(new SampleItem("psychological", "Psychological", null));
+        sampleItemsTheme.add(new SampleItem("space", "Space", null));
+        multiSelectComboBoxTheme.setItems(sampleItemsTheme);
+        multiSelectComboBoxTheme.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
+
 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
