@@ -106,6 +106,7 @@ public class BookSearchView extends Composite<VerticalLayout> {
         //
 
         Grid<Books> gridCostumized = new Grid<>(Books.class, false);
+        gridCostumized.addColumn(Books::getId).setHeader("ID");
         gridCostumized.addColumn(Books::getBookName).setHeader("Name");
         gridCostumized.addColumn(Books::getAutorName).setHeader("Autor");
         gridCostumized.addColumn(Books::getGenre).setHeader("Genre");
@@ -212,7 +213,7 @@ public class BookSearchView extends Composite<VerticalLayout> {
         Connection connection = dataSource.getConnection();
 
         // Preparar a consulta SQL
-        String query = "SELECT * FROM sua_tabela";
+        String query = "SELECT * FROM booksTable";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         // Executar a consulta
@@ -222,6 +223,7 @@ public class BookSearchView extends Composite<VerticalLayout> {
             // Processar os resultados
             while (resultSet.next()) {
                 Books book = new Books();
+                book.setId(resultSet.getInt("Id"));
                 book.setBookName(resultSet.getString("bookName"));
                 book.setAutorName(resultSet.getString("autorName"));
                 book.setGenre(resultSet.getString("genre"));
