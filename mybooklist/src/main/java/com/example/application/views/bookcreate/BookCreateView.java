@@ -110,8 +110,8 @@ public class BookCreateView extends Composite<VerticalLayout> {
         buttonPrimary.addClickListener(e -> {
             String name = textField.getValue();
             String autor = textField2.getValue();
-            String genre = (String) multiSelectComboBox.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
-            String theme = (String) multiSelectComboBox2.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            Object genre = multiSelectComboBox.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
+            Object theme = multiSelectComboBox2.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
             String startDate = datePicker.getValue().toString();
             String finishDate = datePicker2.getValue().toString();
             boolean favorite = checkbox.getValue();
@@ -182,17 +182,17 @@ public class BookCreateView extends Composite<VerticalLayout> {
 
 
 
-    private void addBookToDatabase(String name, String autor, String genre, String theme, String startDate,  String finishDate, boolean favorite) {
+    private void addBookToDatabase(String name, String autor, Object genre, Object theme, String startDate,  String finishDate, boolean favorite) {
         try {
             Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Paolo Klahold\\Desktop\\Faculdade\\2023 02\\POO\\Atividade Avalitiva hard\\vaadin-work-main\\mybooklist\\target\\classes\\biblioteca.db");
             
-            String insertQuery = "INSERT INTO books (name, autor, genre, theme, startDate, finishDate, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO booksTable (bookName, autorName, genre, theme, startDate, finishDate, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
             
             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, autor);
-            preparedStatement.setString(3, genre);
-            preparedStatement.setString(4, theme);
+            preparedStatement.setObject(3, genre);
+            preparedStatement.setObject(4, theme);
             preparedStatement.setString(5, startDate);
             preparedStatement.setString(6, finishDate);
             preparedStatement.setBoolean(7, favorite);
@@ -203,7 +203,10 @@ public class BookCreateView extends Composite<VerticalLayout> {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            
+            System.out.println("Erro ao adicionar livro ao banco de dados");
         }
+        
     }
  
     private void setGridSampleData(Grid grid) {
