@@ -1,10 +1,21 @@
-package com.example.application.views.bookcreate;
+package com.example.application.views.booksearch;
+
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteDataSource;
+
+import com.example.application.data.entity.Books;
+import com.example.application.data.entity.SamplePerson;
+import com.example.application.data.service.SamplePersonService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
@@ -13,142 +24,125 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import com.example.application.data.service.SamplePersonService;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 
-@PageTitle("Book Create")
-@Route(value = "Book-Create", layout = MainLayout.class)
-@RouteAlias(value = "", layout = MainLayout.class)
+
+@PageTitle("Book Search")
+@Route(value = "Book-Search", layout = MainLayout.class)
 @Uses(Icon.class)
-public class BookCreateView extends Composite<VerticalLayout> {
+public class BookSearchView extends Composite<VerticalLayout> {
 
-    public BookCreateView() {
-
+    public BookSearchView() {
         HorizontalLayout layoutRow = new HorizontalLayout();
-        VerticalLayout layoutColumn5 = new VerticalLayout();
-        VerticalLayout layoutColumn2 = new VerticalLayout();
-        H3 h3 = new H3();
-        HorizontalLayout layoutRow2 = new HorizontalLayout();
-        VerticalLayout layoutColumn3 = new VerticalLayout();
         TextField textField = new TextField();
-        MultiSelectComboBox multiSelectComboBox = new MultiSelectComboBox();
-        DatePicker datePicker = new DatePicker();
-        VerticalLayout layoutColumn4 = new VerticalLayout();
         TextField textField2 = new TextField();
+        MultiSelectComboBox multiSelectComboBox = new MultiSelectComboBox();
         MultiSelectComboBox multiSelectComboBox2 = new MultiSelectComboBox();
-        HorizontalLayout layoutRow3 = new HorizontalLayout();
+        DatePicker datePicker = new DatePicker();
         DatePicker datePicker2 = new DatePicker();
+        HorizontalLayout layoutRow2 = new HorizontalLayout();
         Checkbox checkbox = new Checkbox();
-        HorizontalLayout layoutRow4 = new HorizontalLayout();
         Button buttonPrimary = new Button();
-        Button buttonSecondary = new Button();
-        VerticalLayout layoutColumn6 = new VerticalLayout();
-
+        Grid minimalistGrid = new Grid(SamplePerson.class);
+        getContent().setHeightFull();
         getContent().setWidthFull();
-        getContent().addClassName(Padding.LARGE);
+        getContent().addClassName(Gap.XSMALL);
+        getContent().addClassName(Padding.XSMALL);
         layoutRow.setWidthFull();
-        layoutRow.setFlexGrow(1.0, layoutColumn5);
-        layoutColumn5.setWidth(null);
-        layoutRow.setFlexGrow(1.0, layoutColumn2);
-        layoutColumn2.setWidth(null);
-
-        h3.setText("Book add");
-
-        layoutRow2.setWidthFull();
-        layoutRow2.addClassName(Gap.LARGE);
-        layoutRow2.setFlexGrow(1.0, layoutColumn3);
-        layoutColumn3.setWidth(null);
+        layoutRow.addClassName(Gap.MEDIUM);
+        
 
         textField.setLabel("Name");
-        textField.setWidthFull();
-
-        multiSelectComboBox.setLabel("Genre");
-        multiSelectComboBox.setWidthFull();
-        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
-
-        datePicker.setLabel("Start date");
-        datePicker.setWidthFull();
-        
-        layoutRow2.setFlexGrow(1.0, layoutColumn4);
-        layoutColumn4.setWidth(null);
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField);
 
         textField2.setLabel("Autor");
-        textField2.setWidthFull();
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, textField2);
+
+        multiSelectComboBox.setLabel("Genre");
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox);
+        setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
 
         multiSelectComboBox2.setLabel("Theme");
-        multiSelectComboBox2.setWidthFull();
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, multiSelectComboBox2);
         setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
 
-        layoutRow3.addClassName(Gap.MEDIUM);
-        layoutRow3.setWidthFull();
+        datePicker.setLabel("Started after");
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker);
 
-        datePicker2.setLabel("Finish date");
-        layoutRow3.setFlexGrow(1.0, datePicker2);
+        datePicker2.setLabel("Finished before");
+        layoutRow.setAlignSelf(FlexComponent.Alignment.CENTER, datePicker2);
+
+        layoutRow2.setWidthFull();
+        layoutRow2.addClassName(Gap.MEDIUM);
 
         checkbox.setLabel("Favorite");
-        layoutRow4.addClassName(Gap.MEDIUM);
+        layoutRow2.setAlignSelf(FlexComponent.Alignment.CENTER, checkbox);
 
-        buttonPrimary.setText("Save");
+        buttonPrimary.setText("Search");
+        layoutRow2.setAlignSelf(FlexComponent.Alignment.CENTER, buttonPrimary);
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonPrimary.addClickListener(e -> {
-            String name = textField.getValue();
-            String autor = textField2.getValue();
-            String genre = (String) multiSelectComboBox.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
-            String theme = (String) multiSelectComboBox2.getSelectedItems().stream().map(Object::toString).collect(Collectors.joining(","));
-            String startDate = datePicker.getValue().toString();
-            String finishDate = datePicker2.getValue().toString();
-            boolean favorite = checkbox.getValue();
 
-            addBookToDatabase(name, autor, genre, theme, startDate, finishDate, favorite);
-
-            // Add any additional logic here, such as navigating to another view or showing a confirmation message.
-        });
-
-
-        buttonSecondary.setText("Cancel");
         
-        layoutRow.setFlexGrow(1.0, layoutColumn6);
-        layoutColumn6.setWidth(null);
+
+        minimalistGrid.addThemeVariants(
+            GridVariant.LUMO_COMPACT, 
+            GridVariant.LUMO_NO_BORDER,
+            GridVariant.LUMO_NO_ROW_BORDERS);
+
+        //Adiciona os dados ao grid
+        setGridSampleData(minimalistGrid);
+        //
+
+        Grid<Books> gridCostumized = new Grid<>(Books.class, false);
+        gridCostumized.addColumn(Books::getBookName).setHeader("Name");
+        gridCostumized.addColumn(Books::getAutorName).setHeader("Autor");
+        gridCostumized.addColumn(Books::getGenre).setHeader("Genre");
+        gridCostumized.addColumn(Books::getTheme).setHeader("Theme");
+        gridCostumized.addColumn(Books::getStartDate).setHeader("Start Date");
+        gridCostumized.addColumn(Books::getFinishDate).setHeader("Finish Date");
+        gridCostumized.addColumn(Books::getFavorite).setHeader("Favorite");
+
+        List<Books> books = getBooksFromDatabase();
+        gridCostumized.setItems(books);
+  
         getContent().add(layoutRow);
-        layoutRow.add(layoutColumn5);
-        layoutRow.add(layoutColumn2);
-        layoutColumn2.add(h3);
-        layoutColumn2.add(layoutRow2);
-        layoutRow2.add(layoutColumn3);
-        layoutColumn3.add(textField);
-        layoutColumn3.add(multiSelectComboBox);
-        layoutColumn3.add(datePicker);
-        layoutRow2.add(layoutColumn4);
-        layoutColumn4.add(textField2);
-        layoutColumn4.add(multiSelectComboBox2);
-        layoutColumn4.add(layoutRow3);
-        layoutRow3.add(datePicker2);
-        layoutColumn2.add(checkbox);
-        layoutColumn2.add(layoutRow4);
-        layoutRow4.add(buttonPrimary);
-        layoutRow4.add(buttonSecondary);
-        layoutRow.add(layoutColumn6);
-    }
+        layoutRow.add(textField);
+        layoutRow.add(textField2);
+        layoutRow.add(multiSelectComboBox);
+        layoutRow.add(multiSelectComboBox2);
+        layoutRow.add(datePicker);
+        layoutRow.add(datePicker2);
+        getContent().add(layoutRow2);
+        layoutRow2.add(checkbox);
+        layoutRow2.add(buttonPrimary);
 
+        //onde coloca a grid que via ser usada
+        getContent().add(gridCostumized);
+
+        //ATUALIZAR GRID
+        buttonPrimary.addClickListener(event -> {
+        // Outras ações de pesquisa, se houver
+        updateGridData(gridCostumized); // Atualize o Grid com os novos dados
+        });
+        //FIM ATUALIZAR GRID
+    }
+    
+
+
+// -- Começo para funcionar a Combobox
     record SampleItem(String value, String label, Boolean disabled) {
-        
     }
 
     private void setMultiSelectComboBoxSampleDataGenre(MultiSelectComboBox multiSelectComboBoxGenre) {
@@ -180,32 +174,8 @@ public class BookCreateView extends Composite<VerticalLayout> {
         multiSelectComboBoxTheme.setItemLabelGenerator(item -> ((SampleItem) item).label());
     }
 
+// -- Fim para funcionar a Combobox
 
-
-    private void addBookToDatabase(String name, String autor, String genre, String theme, String startDate,  String finishDate, boolean favorite) {
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Paolo Klahold\\Desktop\\Faculdade\\2023 02\\POO\\Atividade Avalitiva hard\\vaadin-work-main\\mybooklist\\target\\classes\\biblioteca.db");
-            
-            String insertQuery = "INSERT INTO books (name, autor, genre, theme, startDate, finishDate, favorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            
-            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, autor);
-            preparedStatement.setString(3, genre);
-            preparedStatement.setString(4, theme);
-            preparedStatement.setString(5, startDate);
-            preparedStatement.setString(6, finishDate);
-            preparedStatement.setBoolean(7, favorite);
-            
-            preparedStatement.executeUpdate();
-            
-            preparedStatement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
- 
     private void setGridSampleData(Grid grid) {
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
@@ -214,4 +184,68 @@ public class BookCreateView extends Composite<VerticalLayout> {
 
     @Autowired()
     private SamplePersonService samplePersonService;
+
+
+    private List<Books> getBooksFromDatabase() {
+
+        List<Books> books = new ArrayList<>();
+        try {
+           
+//            // Estabelecer uma conexão com o banco de dados MySQL
+//           Connection connection = DriverManager.getConnection("jdbc:mysql://seu_host/seu_banco_de_dados", "seu_usuario", "sua_senha");
+//
+//            // Preparar a consulta SQL
+//            String query = "SELECT * FROM sua_tabela";
+//            PreparedStatement preparedStatement = connection.prepareStatement(query);
+//
+//            // Executar a consulta
+//            ResultSet resultSet = preparedStatement.executeQuery();
+
+        // Configurar o DataSource para SQLite
+        SQLiteConfig config = new SQLiteConfig();
+        //config.setReadOnly(true); // Defina como "true" se for apenas leitura
+
+        SQLiteDataSource dataSource = new SQLiteDataSource(config);
+        dataSource.setUrl("jdbc:sqlite:C:\\Users\\Paolo Klahold\\Desktop\\Faculdade\\2023 02\\POO\\Atividade Avalitiva hard\\vaadin-work-main\\mybooklist\\target\\classes\\biblioteca.db"); // Substitua pelo caminho correto para o arquivo SQLite
+
+        // Estabelecer uma conexão com o banco de dados SQLite
+        Connection connection = dataSource.getConnection();
+
+        // Preparar a consulta SQL
+        String query = "SELECT * FROM sua_tabela";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        // Executar a consulta
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+
+            // Processar os resultados
+            while (resultSet.next()) {
+                Books book = new Books();
+                book.setBookName(resultSet.getString("bookName"));
+                book.setAutorName(resultSet.getString("autorName"));
+                book.setGenre(resultSet.getString("genre"));
+                book.setTheme(resultSet.getString("theme"));
+                book.setStartDate(resultSet.getString("startDate"));
+                book.setFinishDate(resultSet.getString("finishDate"));
+                book.setFavorite(resultSet.getBoolean("favorite"));
+                books.add(book);
+            }
+
+            // Fechar recursos
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return books;
+    }
+
+    //METODO ATUALIZAR GRID
+    private void updateGridData(Grid<Books> grid) {
+        List<Books> books = getBooksFromDatabase(); // Obtenha os novos dados do banco de dados
+        grid.setItems(books); // Atualize os dados no Grid
+    }
+
 }
