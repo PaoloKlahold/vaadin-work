@@ -52,6 +52,7 @@ public class BookUpdateView extends Composite<VerticalLayout> {
         Button buttonPrimary2 = new Button();
         Button buttonSecondary = new Button();
         VerticalLayout layoutColumn6 = new VerticalLayout();
+
         getContent().setWidthFull();
         getContent().addClassName(Padding.LARGE);
         layoutRow.setWidthFull();
@@ -59,36 +60,52 @@ public class BookUpdateView extends Composite<VerticalLayout> {
         layoutColumn5.setWidth(null);
         layoutRow.setFlexGrow(1.0, layoutColumn2);
         layoutColumn2.setWidth(null);
+
         h3.setText("Book Update or Delete");
+
         layoutRow2.setWidthFull();
         layoutRow2.addClassName(Gap.LARGE);
         layoutRow2.setFlexGrow(1.0, layoutColumn3);
         layoutColumn3.setWidth(null);
+
         textField.setLabel("Name");
         textField.setWidthFull();
+
         multiSelectComboBox.setLabel("Genre");
         multiSelectComboBox.setWidthFull();
         setMultiSelectComboBoxSampleDataGenre(multiSelectComboBox);
+
         datePicker.setLabel("Start date");
         datePicker.setWidthFull();
+
         checkbox.setLabel("Favorite");
+
         layoutRow2.setFlexGrow(1.0, layoutColumn4);
         layoutColumn4.setWidth(null);
         layoutRow3.addClassName(Gap.MEDIUM);
         layoutRow3.setWidthFull();
+
         textField2.setLabel("Autor");
         layoutRow3.setFlexGrow(1.0, textField2);
+
         multiSelectComboBox2.setLabel("Theme");
         multiSelectComboBox2.setWidthFull();
         setMultiSelectComboBoxSampleDataTheme(multiSelectComboBox2);
+
         datePicker2.setLabel("Finish date");
         datePicker2.setWidthFull();
+
         layoutRow4.addClassName(Gap.MEDIUM);
+
         buttonPrimary.setText("Update");
         buttonPrimary.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+
         buttonPrimary2.setText("Delete");
         buttonPrimary2.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonPrimary2.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
         buttonSecondary.setText("Cancel");
+
         layoutRow.setFlexGrow(1.0, layoutColumn6);
         layoutColumn6.setWidth(null);
         getContent().add(layoutRow);
