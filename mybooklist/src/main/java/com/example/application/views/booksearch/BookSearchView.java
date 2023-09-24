@@ -115,6 +115,16 @@ public class BookSearchView extends Composite<VerticalLayout> {
         gridCostumized.addColumn(Books::getFinishDate).setHeader("Finish Date");
         gridCostumized.addColumn(Books::getFavorite).setHeader("Favorite");
 
+        //adicione uma coluna que seja um botão
+        gridCostumized.addComponentColumn(item -> {
+            Button button = new Button("Edit");
+            button.addClickListener(event -> {
+                // Outras ações de edição, se houver
+                updateGridData(gridCostumized); // Atualize o Grid com os novos dados
+            });
+            return button;
+        }).setHeader("Edit");
+
         List<Books> books = getBooksFromDatabase();
         gridCostumized.setItems(books);
   
