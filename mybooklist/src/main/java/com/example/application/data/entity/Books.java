@@ -7,22 +7,19 @@ public class Books {
     private Integer id;
     private String bookName;
     private String autorName;
-    private String genreType;
+    private String genre;
     private String theme;
-    private LocalDate startDate;
-    private LocalDate finishDate;
+    private String startDate;
+    private String finishDate;
     private boolean favorite;
 
     public Integer getId() {
         return id;
     }
-    public void getId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-    @Override
-    public int hashCode() {
-        return id;
-    }
+   
 
     @Override
     public boolean equals(Object obj) {
@@ -51,10 +48,10 @@ public class Books {
     }
 
     public String getGenre() {
-        return theme;
+        return genre;
     }
-    public void setGenre(String genreType) {
-        this.genreType = genreType;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public String getTheme() {
@@ -64,17 +61,17 @@ public class Books {
         this.theme = theme;
     }
 
-    public LocalDate getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getFinishDate() {
+    public String getFinishDate() {
         return finishDate;
     }
-    public void setFinishDate(LocalDate finishDate) {
+    public void setFinishDate(String finishDate) {
         this.finishDate = finishDate;
     }
 
